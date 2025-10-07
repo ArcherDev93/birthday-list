@@ -17,8 +17,15 @@ export default function BirthdayCard({ birthday, onEdit, onDelete }: BirthdayCar
     const { formatDate } = await import("@/utils/birthday");
 
     let shareText = `🎂 Cumpleaños de ${birthday.name}\n`;
-    shareText += `📅 Fecha: ${formatDate(birthday.birthDate)}\n`;
-    shareText += `🎂 Cumplirá: ${birthday.age} años\n`;
+    shareText += `🎉 Fecha de Cumpleaños: ${formatDate(birthday.celebrationDate)}\n`;
+    
+    if (birthday.birthDate) {
+      shareText += `📅 Fecha de Nacimiento: ${formatDate(birthday.birthDate)}\n`;
+    }
+    
+    if (birthday.age) {
+      shareText += `🎂 Cumplirá: ${birthday.age} años\n`;
+    }
 
     if (birthday.location) {
       shareText += `📍 Lugar: ${birthday.location}\n`;
@@ -69,8 +76,13 @@ export default function BirthdayCard({ birthday, onEdit, onDelete }: BirthdayCar
       </div>
 
       <div className="space-y-2">
-        <p className="text-gray-600">📅 {formatDateShort(birthday.birthDate)}</p>
-        <p className="text-gray-600">🎂 Cumplirá: {birthday.age} años</p>
+        <p className="text-gray-600">🎉 {formatDateShort(birthday.celebrationDate)}</p>
+        {birthday.birthDate && (
+          <p className="text-gray-600 text-sm">📅 Nació: {formatDateShort(birthday.birthDate)}</p>
+        )}
+        {birthday.age && birthday.age > 0 && (
+          <p className="text-gray-600">🎂 Cumplirá: {birthday.age} años</p>
+        )}
 
         {birthday.location && <p className="text-gray-600">📍 {birthday.location}</p>}
 

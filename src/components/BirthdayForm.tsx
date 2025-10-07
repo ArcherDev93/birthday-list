@@ -13,90 +13,35 @@ export default function BirthdayForm({ editingBirthday, onSubmit, onCancel }: Bi
   const [formData, setFormData] = useState<BirthdayFormData>({
     name: "",
     birthDate: "",
+    celebrationDate: "",
     location: "",
     asistencia: [],
   });
-  const [displayDate, setDisplayDate] = useState(""); // For European format display
   const [asistenciaInput, setAsistenciaInput] = useState("");
-
-  // Convert ISO date (yyyy-mm-dd) to European format (dd/mm/yyyy)
-  const formatToEuropean = (isoDate: string): string => {
-    if (!isoDate) return "";
-    const date = new Date(isoDate);
-    const day = date.getDate().toString().padStart(2, "0");
-    const month = (date.getMonth() + 1).toString().padStart(2, "0");
-    const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
-  };
-
-  // Convert European format (dd/mm/yyyy) to ISO date (yyyy-mm-dd)
-  const formatToISO = (europeanDate: string): string => {
-    if (!europeanDate) return "";
-    const [day, month, year] = europeanDate.split("/");
-    if (day && month && year) {
-      return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
-    }
-    return "";
-  };
-
-  // Validate European date format
-  const isValidEuropeanDate = (dateString: string): boolean => {
-    const regex = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/;
-    const match = dateString.match(regex);
-
-    if (!match) return false;
-
-    const day = parseInt(match[1], 10);
-    const month = parseInt(match[2], 10);
-    const year = parseInt(match[3], 10);
-
-    // Check if date values are valid
-    if (month < 1 || month > 12) return false;
-    if (day < 1 || day > 31) return false;
-    if (year < 1900 || year > 2100) return false;
-
-    // Check if day is valid for the month
-    const date = new Date(year, month - 1, day);
-    return date.getDate() === day && date.getMonth() === month - 1 && date.getFullYear() === year;
-  };
 
   useEffect(() => {
     if (editingBirthday) {
       setFormData({
         name: editingBirthday.name,
-        birthDate: editingBirthday.birthDate,
+        birthDate: editingBirthday.birthDate || "",
+        celebrationDate: editingBirthday.celebrationDate,
         location: editingBirthday.location || "",
         asistencia: editingBirthday.asistencia || [],
       });
-      setDisplayDate(formatToEuropean(editingBirthday.birthDate));
     } else {
-      setFormData({ name: "", birthDate: "", location: "", asistencia: [] });
-      setDisplayDate("");
+      setFormData({ name: "", birthDate: "", celebrationDate: "", location: "", asistencia: [] });
     }
   }, [editingBirthday]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name.trim() || !displayDate) {
+    if (!formData.name.trim() || !formData.celebrationDate) {
+      alert("Por favor ingresa el nombre y la fecha de cumpleaños");
       return;
     }
 
-    // Validate European date format
-    if (!isValidEuropeanDate(displayDate)) {
-      alert("Por favor ingresa una fecha válida en formato dd/mm/aaaa");
-      return;
-    }
-
-    // Convert to ISO format for storage
-    const isoDate = formatToISO(displayDate);
-    const submissionData = {
-      ...formData,
-      birthDate: isoDate,
-    };
-
-    onSubmit(submissionData);
-    setFormData({ name: "", birthDate: "", location: "", asistencia: [] });
-    setDisplayDate("");
+    onSubmit(formData);
+    setFormData({ name: "", birthDate: "", celebrationDate: "", location: "", asistencia: [] });
     setAsistenciaInput("");
   };
 
@@ -146,9 +91,31 @@ export default function BirthdayForm({ editingBirthday, onSubmit, onCancel }: Bi
 
         <div>
           <label htmlFor="birthDate" className="block text-sm font-medium text-gray-700 mb-1">
-            Fecha de Nacimiento
+            Fecha de Nacimiento <span className="text-gray-500 text-sm">(opcional)</span>
           </label>
-          <input type="text" id="birthDate" value={displayDate} onChange={(e) => setDisplayDate(e.target.value)} placeholder="dd/mm/aaaa" className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" required />
+          <input 
+            type="date" 
+            id="birthDate" 
+            name="birthDate"
+            value={formData.birthDate} 
+            onChange={handleChange}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
+          />
+        </div>
+
+        <div>
+          <label htmlFor="celebrationDate" className="block text-sm font-medium text-gray-700 mb-1">
+            Fecha de Cumpleaños <span className="text-red-500">*</span>
+          </label>
+          <input 
+            type="date" 
+            id="celebrationDate" 
+            name="celebrationDate"
+            value={formData.celebrationDate} 
+            onChange={handleChange}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
+            required 
+          />
         </div>
 
         <div>

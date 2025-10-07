@@ -150,7 +150,7 @@ export default function BirthdayListFirebase() {
       {todaysBirthdays.length > 0 && (
         <div>
           <h2 className="text-2xl font-semibold text-yellow-700 mb-4">🎉 ¡Cumpleaños de Hoy!</h2>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2">
             {todaysBirthdays.map((birthday) => (
               <BirthdayCard key={birthday.id} birthday={birthday} onEdit={handleEdit} onDelete={handleDelete} />
             ))}
@@ -162,7 +162,7 @@ export default function BirthdayListFirebase() {
       {upcomingBirthdays.length > 0 && (
         <div>
           <h2 className="text-2xl font-semibold text-gray-700 mb-4">📅 Próximos Cumpleaños</h2>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2">
             {upcomingBirthdays.map((birthday) => (
               <BirthdayCard key={birthday.id} birthday={birthday} onEdit={handleEdit} onDelete={handleDelete} />
             ))}

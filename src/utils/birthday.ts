@@ -51,10 +51,21 @@ export function calculateDaysUntilBirthday(birthDate: string): number {
 }
 
 export function enrichBirthdayData(birthday: Omit<Birthday, "age" | "daysUntilBirthday">): Birthday {
+  // Use celebrationDate for calculations, fallback to birthDate if available
+  const dateForCalculation = birthday.celebrationDate || birthday.birthDate;
+  
+  if (!dateForCalculation) {
+    return {
+      ...birthday,
+      age: 0,
+      daysUntilBirthday: 0,
+    };
+  }
+  
   return {
     ...birthday,
-    age: calculateUpcomingAge(birthday.birthDate), // Use upcoming age instead of current age
-    daysUntilBirthday: calculateDaysUntilBirthday(birthday.birthDate),
+    age: birthday.birthDate ? calculateUpcomingAge(birthday.birthDate) : 0, // Age based on actual birth date
+    daysUntilBirthday: calculateDaysUntilBirthday(dateForCalculation), // Days until celebration
   };
 }
 
