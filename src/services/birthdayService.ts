@@ -4,9 +4,8 @@ import { Birthday } from "@/types/birthday";
 
 const COLLECTION_NAME = "birthdays";
 
-export interface FirebaseBirthday extends Omit<Birthday, "id"> {
-  // Firestore will automatically generate the ID
-}
+// Type for birthday data when adding to Firestore (without ID)
+export type FirebaseBirthday = Omit<Birthday, "id">;
 
 // Add a new birthday
 export async function addBirthday(birthday: Omit<Birthday, "id">): Promise<string> {

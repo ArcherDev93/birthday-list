@@ -5,13 +5,12 @@ import { Birthday, BirthdayFormData } from "@/types/birthday";
 import { enrichBirthdayData, sortBirthdaysByUpcoming } from "@/utils/birthday";
 import BirthdayCard from "@/components/BirthdayCard";
 import BirthdayForm from "@/components/BirthdayForm";
-import { addBirthday, updateBirthday, deleteBirthday, subscribeToBirthdays, exportBirthdaysData } from "@/services/birthdayService";
+import { addBirthday, updateBirthday, deleteBirthday, subscribeToBirthdays } from "@/services/birthdayService";
 
 export default function BirthdayListFirebase() {
   const [birthdays, setBirthdays] = useState<Birthday[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [editingBirthday, setEditingBirthday] = useState<Birthday | null>(null);
-  const [shareUrl, setShareUrl] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -78,30 +77,6 @@ export default function BirthdayListFirebase() {
     setEditingBirthday(null);
   };
 
-  const handleShare = async () => {
-    try {
-      setError(null);
-      const dataToShare = await exportBirthdaysData();
-      const encodedData = encodeURIComponent(dataToShare);
-      const url = `${window.location.origin}?data=${encodedData}`;
-
-      if (navigator.share) {
-        await navigator.share({
-          title: "Lista de Cumpleaños",
-          text: "¡Mira nuestra lista familiar de cumpleaños!",
-          url: url,
-        });
-      } else {
-        await navigator.clipboard.writeText(url);
-        setShareUrl(url);
-        alert("¡Enlace copiado al portapapeles!");
-      }
-    } catch (error) {
-      console.error("Error sharing:", error);
-      setError("No se pudo crear el enlace para compartir. Por favor intenta de nuevo.");
-    }
-  };
-
   const handleImportFromUrl = async () => {
     const urlParams = new URLSearchParams(window.location.search);
     const data = urlParams.get("data");
@@ -112,7 +87,7 @@ export default function BirthdayListFirebase() {
 
         // Add each birthday to Firestore
         for (const birthday of importedBirthdays) {
-          const { id, age, daysUntilBirthday, ...birthdayData } = birthday;
+          const { id: _id, age: _age, daysUntilBirthday: _daysUntilBirthday, ...birthdayData } = birthday;
           await addBirthday(birthdayData);
         }
 
@@ -166,9 +141,6 @@ export default function BirthdayListFirebase() {
         <button onClick={() => setShowForm(true)} className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors font-medium">
           + Agregar Cumpleaños
         </button>
-        <button onClick={handleShare} disabled={birthdays.length === 0} className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors font-medium">
-          📤 Compartir Lista
-        </button>
       </div>
 
       {/* Add/Edit Form */}
@@ -207,19 +179,6 @@ export default function BirthdayListFirebase() {
           <button onClick={() => setShowForm(true)} className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors font-medium">
             + Agregar Primer Cumpleaños
           </button>
-        </div>
-      )}
-
-      {/* Share URL Display */}
-      {shareUrl && (
-        <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-          <h3 className="font-semibold text-blue-800 mb-2">Enlace para Compartir:</h3>
-          <div className="flex gap-2">
-            <input type="text" value={shareUrl} readOnly className="flex-1 px-3 py-1 text-sm bg-white border border-blue-300 rounded" />
-            <button onClick={() => navigator.clipboard.writeText(shareUrl)} className="bg-blue-600 text-white px-3 py-1 text-sm rounded hover:bg-blue-700">
-              Copiar
-            </button>
-          </div>
         </div>
       )}
     </div>

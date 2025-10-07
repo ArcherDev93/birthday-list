@@ -27,14 +27,16 @@ export default function FirebaseTest() {
         setDetails((prev) => [...prev, `Birthdays collection: ${birthdaysSnapshot.size} documents`]);
 
         setStatus("✅ Firebase connection successful!");
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("Firebase test error:", error);
         setStatus("❌ Firebase connection failed");
-        setDetails((prev) => [...prev, `Error: ${error.code || "Unknown"} - ${error.message}`]);
+        const errorMessage = error instanceof Error ? error.message : "Unknown error";
+        const errorCode = (error as { code?: string })?.code || "Unknown";
+        setDetails((prev) => [...prev, `Error: ${errorCode} - ${errorMessage}`]);
 
-        if (error.code === "permission-denied") {
+        if (errorCode === "permission-denied") {
           setDetails((prev) => [...prev, "This is likely a Firestore security rules issue"]);
-        } else if (error.code === "not-found") {
+        } else if (errorCode === "not-found") {
           setDetails((prev) => [...prev, "Firestore database may not be initialized"]);
         }
       }

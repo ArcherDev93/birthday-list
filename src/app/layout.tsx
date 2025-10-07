@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Lista de Cumpleaños - Mantén Registro de Cumpleaños Especiales",
-  description: "Una app colaborativa de lista de cumpleaños para niños y familias para rastrear y compartir próximos cumpleaños",
+  title: "Lista de Cumpleaños - Colegio Brains",
+  description: "Una aplicación colaborativa para organizar cumpleaños de niños y familias, con asistencia y ubicaciones",
 };
 
 export default function RootLayout({

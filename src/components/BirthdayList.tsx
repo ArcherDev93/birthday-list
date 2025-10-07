@@ -19,7 +19,7 @@ export default function BirthdayList() {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       try {
-        const parsedBirthdays = JSON.parse(saved).map((b: any) => enrichBirthdayData(b));
+        const parsedBirthdays = JSON.parse(saved).map((b: Birthday) => enrichBirthdayData(b));
         setBirthdays(parsedBirthdays);
       } catch (error) {
         console.error("Error loading birthdays:", error);
@@ -94,7 +94,7 @@ export default function BirthdayList() {
 
     if (data) {
       try {
-        const importedBirthdays = JSON.parse(decodeURIComponent(data)).map((b: any) => enrichBirthdayData(b));
+        const importedBirthdays = JSON.parse(decodeURIComponent(data)).map((b: Birthday) => enrichBirthdayData(b));
         setBirthdays(importedBirthdays);
         // Clean up URL
         window.history.replaceState({}, document.title, window.location.pathname);
@@ -139,7 +139,7 @@ export default function BirthdayList() {
       {/* Today's Birthdays */}
       {todaysBirthdays.length > 0 && (
         <div>
-          <h2 className="text-2xl font-semibold text-yellow-700 mb-4">🎉 Today's Birthdays!</h2>
+          <h2 className="text-2xl font-semibold text-yellow-700 mb-4">🎉 Today&apos;s Birthdays!</h2>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {todaysBirthdays.map((birthday) => (
               <BirthdayCard key={birthday.id} birthday={birthday} onEdit={handleEdit} onDelete={handleDelete} />
