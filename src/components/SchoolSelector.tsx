@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { School } from "@/types/school";
 import { subscribeToSchools, addSchool } from "@/services/schoolService";
 import { migrateToNewStructure, checkMigrationNeeded } from "@/utils/migration";
+import { formatSafeDate } from "@/utils/dateUtils";
 import GradientText from "@/components/GradientText";
 
 export default function SchoolSelector() {
@@ -102,7 +103,7 @@ export default function SchoolSelector() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-6">
+    <div className="max-w-4xl mx-auto space-y-6">
       {/* Header */}
       <div className="text-center">
         <GradientText as="h1" className="text-4xl font-bold mb-2">
@@ -119,8 +120,8 @@ export default function SchoolSelector() {
       )}
 
       {/* Add School Button */}
-      <div className="flex justify-center">
-        <button onClick={() => setShowAddForm(!showAddForm)} className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-medium">
+      <div className="flex flex-wrap gap-4 justify-center">
+        <button onClick={() => setShowAddForm(!showAddForm)} className="bg-teal-400 text-white px-6 py-3 rounded-lg hover:bg-teal-500 text-shadow-sm shadow-md  transition-colors font-medium">
           ➕ Agregar Nueva Escuela
         </button>
       </div>
@@ -143,8 +144,8 @@ export default function SchoolSelector() {
                 required
               />
             </div>
-            <div className="flex gap-3">
-              <button type="submit" className="flex-1 bg-purple-600 text-white py-3 px-6 rounded-xl font-bold hover:bg-purple-700 transition-colors">
+            <div className="flex gap-2">
+              <button type="submit" className="flex-2 bg-purple-600 text-white py-3 px-2 md:px-6 rounded-xl font-bold hover:bg-purple-700 transition-colors">
                 ✅ Crear Escuela
               </button>
               <button
@@ -153,7 +154,7 @@ export default function SchoolSelector() {
                   setShowAddForm(false);
                   setNewSchoolName("");
                 }}
-                className="flex-1 bg-gray-400 text-white py-3 px-6 rounded-xl font-bold hover:bg-gray-500 transition-colors"
+                className="flex-1 bg-gray-400 text-white py-3 px-2 md:px-6 rounded-xl font-bold hover:bg-gray-500 transition-colors"
               >
                 ❌ Cancelar
               </button>
@@ -170,7 +171,7 @@ export default function SchoolSelector() {
               <div className="text-center">
                 <div className="text-4xl mb-3 group-hover:scale-110 transition-transform duration-200">🏫</div>
                 <h3 className="text-xl font-bold text-gray-800 mb-2 group-hover:text-purple-600 transition-colors">{school.name}</h3>
-                <p className="text-sm text-gray-500">Creada el {new Date(school.createdAt).toLocaleDateString()}</p>
+                <p className="text-sm text-gray-500">Creada el {formatSafeDate(school.createdAt)}</p>
               </div>
             </div>
           ))}
@@ -182,7 +183,7 @@ export default function SchoolSelector() {
             ¡No hay escuelas aún!
           </GradientText>
           <p className="text-gray-500 mb-4">Crea tu primera escuela para comenzar.</p>
-          <button onClick={() => setShowAddForm(true)} className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-medium">
+          <button onClick={() => setShowAddForm(true)} className="bg-teal-400 text-white px-6 py-3 rounded-lg hover:bg-teal-500 text-shadow-sm shadow-md  transition-colors font-medium">
             ➕ Crear Primera Escuela
           </button>
         </div>

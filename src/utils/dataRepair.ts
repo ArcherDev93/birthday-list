@@ -41,7 +41,7 @@ export const repairExistingData = async () => {
         // Create new document with slug ID
         await setDoc(doc(db, "schools", newSlug), {
           name: school.name,
-          createdAt: school.createdAt,
+          createdAt: school.createdAt || new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         });
 
@@ -81,7 +81,7 @@ export const repairExistingData = async () => {
         await setDoc(doc(db, "classes", newSlug), {
           name: classItem.name,
           schoolId: newSchoolId,
-          createdAt: classItem.createdAt,
+          createdAt: classItem.createdAt || new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         });
 

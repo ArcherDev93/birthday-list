@@ -125,7 +125,7 @@ export default function BirthdayList() {
 
       {/* Action Buttons */}
       <div className="flex flex-wrap gap-4 justify-center">
-        <button onClick={() => setShowForm(true)} className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors font-medium">
+        <button onClick={() => setShowForm(true)} className="bg-teal-400 text-white px-6 py-2 rounded-lg hover:bg-teal-500 text-shadow-sm shadow-md  transition-colors font-medium">
           + Add Birthday
         </button>
         <button onClick={handleShare} disabled={birthdays.length === 0} className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors font-medium">
@@ -166,7 +166,7 @@ export default function BirthdayList() {
           <div className="text-6xl mb-4">🎂</div>
           <h3 className="text-xl font-semibold text-gray-600 mb-2">No birthdays yet!</h3>
           <p className="text-gray-500 mb-4">Add your first birthday to get started.</p>
-          <button onClick={() => setShowForm(true)} className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors font-medium">
+          <button onClick={() => setShowForm(true)} className="bg-teal-400 text-white px-6 py-2 rounded-lg hover:bg-teal-500 text-shadow-sm shadow-md  transition-colors font-medium">
             + Add First Birthday
           </button>
         </div>

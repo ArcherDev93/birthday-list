@@ -155,7 +155,7 @@ export default function ClassBirthdayList({ schoolId, classId }: ClassBirthdayLi
 
   if (loading) {
     return (
-      <div className="max-w-4xl mx-auto p-6 space-y-6">
+      <div className="max-w-4xl mx-auto space-y-6">
         <div className="text-center py-12">
           <div className="text-6xl mb-4">🎂</div>
           <h3 className="text-xl font-semibold text-gray-600 mb-2">Cargando cumpleaños...</h3>
@@ -169,7 +169,7 @@ export default function ClassBirthdayList({ schoolId, classId }: ClassBirthdayLi
   const upcomingBirthdays = sortedBirthdays.filter((b) => (b.daysUntilBirthday || 0) > 0);
 
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-6">
+    <div className="max-w-4xl mx-auto space-y-6">
       {/* Navigation Breadcrumb */}
       <nav className="text-sm text-gray-600">
         <Link href="/" className="hover:text-purple-600 transition-colors">
@@ -200,7 +200,7 @@ export default function ClassBirthdayList({ schoolId, classId }: ClassBirthdayLi
 
       {/* Action Buttons */}
       <div className="flex flex-wrap gap-4 justify-center">
-        <button onClick={() => setShowForm(true)} className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors font-medium">
+        <button onClick={() => setShowForm(true)} className="bg-teal-400 text-white px-6 py-2 rounded-lg hover:bg-teal-500 text-shadow-sm shadow-md  transition-colors font-medium">
           + Agregar Cumpleaños
         </button>
       </div>
@@ -242,7 +242,7 @@ export default function ClassBirthdayList({ schoolId, classId }: ClassBirthdayLi
           <div className="text-6xl mb-4">🎂</div>
           <h3 className="text-xl font-semibold text-gray-600 mb-2">¡Aún no hay cumpleaños en esta clase!</h3>
           <p className="text-gray-500 mb-4">Agrega tu primer cumpleaños para comenzar.</p>
-          <button onClick={() => setShowForm(true)} className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors font-medium">
+          <button onClick={() => setShowForm(true)} className="bg-teal-400 text-white px-6 py-2 rounded-lg hover:bg-teal-500 text-shadow-sm shadow-md  transition-colors font-medium">
             + Agregar Primer Cumpleaños
           </button>
         </div>
