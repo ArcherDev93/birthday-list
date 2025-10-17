@@ -8,15 +8,17 @@ interface BirthdayFormProps {
   editingBirthday?: Birthday | null;
   onSubmit: (data: BirthdayFormData) => void;
   onCancel: () => void;
+  classId?: string; // Optional for backward compatibility
 }
 
-export default function BirthdayForm({ editingBirthday, onSubmit, onCancel }: BirthdayFormProps) {
+export default function BirthdayForm({ editingBirthday, onSubmit, onCancel, classId }: BirthdayFormProps) {
   const [formData, setFormData] = useState<BirthdayFormData>({
     name: "",
     birthDate: "",
     celebrationDate: "",
     location: "",
     asistencia: [],
+    classId: classId || "", // Use provided classId or empty string
   });
   const [asistenciaInput, setAsistenciaInput] = useState("");
 
@@ -28,11 +30,19 @@ export default function BirthdayForm({ editingBirthday, onSubmit, onCancel }: Bi
         celebrationDate: editingBirthday.celebrationDate,
         location: editingBirthday.location || "",
         asistencia: editingBirthday.asistencia || [],
+        classId: editingBirthday.classId || classId || "",
       });
     } else {
-      setFormData({ name: "", birthDate: "", celebrationDate: "", location: "", asistencia: [] });
+      setFormData({
+        name: "",
+        birthDate: "",
+        celebrationDate: "",
+        location: "",
+        asistencia: [],
+        classId: classId || "",
+      });
     }
-  }, [editingBirthday]);
+  }, [editingBirthday, classId]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,7 +52,14 @@ export default function BirthdayForm({ editingBirthday, onSubmit, onCancel }: Bi
     }
 
     onSubmit(formData);
-    setFormData({ name: "", birthDate: "", celebrationDate: "", location: "", asistencia: [] });
+    setFormData({
+      name: "",
+      birthDate: "",
+      celebrationDate: "",
+      location: "",
+      asistencia: [],
+      classId: classId || "",
+    });
     setAsistenciaInput("");
   };
 
