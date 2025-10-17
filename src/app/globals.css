@@ -1,34 +1,68 @@
 @import "tailwindcss";
 
 :root {
-	--background: #ffffff;
-	--foreground: #171717;
+  --background: #ffffff;
+  --foreground: #171717;
 }
 
 @theme inline {
-	--color-background: var(--background);
-	--color-foreground: var(--foreground);
-	--font-sans: var(--font-geist-sans);
-	--font-mono: var(--font-geist-mono);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
 }
 
 @media (prefers-color-scheme: dark) {
-	:root {
-		--background: #0a0a0a;
-		--foreground: #ededed;
-	}
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
 }
 
 body {
-	background: var(--background);
-	color: var(--foreground);
-	font-family: Arial, Helvetica, sans-serif;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 button {
-	cursor: pointer;
+  cursor: pointer;
 }
 
 .BirthdayCard {
-	box-shadow: 0 0px 6px -1px rgb(0 0 0 / 0.08), 0 2px 30px -2px rgb(0 0 0 / 0.1);
+  box-shadow: 0 0px 6px -1px rgb(0 0 0 / 0.08), 0 2px 30px -2px rgb(0 0 0 / 0.1);
+}
+
+/* Preserve emoji colors in gradient text */
+.emoji-preserve {
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+  -webkit-text-fill-color: unset !important;
+  color: inherit !important;
+}
+
+/* Parent class for gradient text that will preserve child emojis */
+.emoji-preserve-parent .emoji-preserve {
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+  -webkit-text-fill-color: unset !important;
+  color: currentColor !important;
+}
+
+/* Utility class for gradient text that preserves emojis */
+.gradient-text-safe {
+  background: linear-gradient(to right, var(--gradient-from, #9333ea), var(--gradient-to, #db2777));
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Ensure emojis within gradient text maintain their original appearance */
+.gradient-text-safe .emoji-preserve {
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+  -webkit-text-fill-color: unset !important;
 }

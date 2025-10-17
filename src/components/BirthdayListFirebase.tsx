@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Birthday, BirthdayFormData } from "@/types/birthday";
 import { enrichBirthdayData, sortBirthdaysByUpcoming } from "@/utils/birthday";
 import BirthdayCard from "@/components/BirthdayCard";
 import BirthdayForm from "@/components/BirthdayForm";
 import { addBirthday, updateBirthday, deleteBirthday, subscribeToBirthdays } from "@/services/birthdayService";
+import GradientText from "@/components/GradientText";
 
 export default function BirthdayListFirebase() {
   const [birthdays, setBirthdays] = useState<Birthday[]>([]);
@@ -13,6 +14,24 @@ export default function BirthdayListFirebase() {
   const [editingBirthday, setEditingBirthday] = useState<Birthday | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Ref for the form container to scroll to it
+  const formRef = useRef<HTMLDivElement>(null);
+
+  // Function to scroll to form smoothly
+  const scrollToForm = () => {
+    if (formRef.current) {
+      // Calculate offset - more space on mobile devices
+      const isMobile = window.innerWidth < 768;
+      const offset = isMobile ? 10 : 20; // Less offset on mobile for better visibility
+      const offsetTop = formRef.current.offsetTop - offset;
+
+      window.scrollTo({
+        top: Math.max(0, offsetTop), // Ensure we don't scroll to negative values
+        behavior: "smooth",
+      });
+    }
+  };
 
   // Subscribe to real-time updates from Firestore
   useEffect(() => {
@@ -58,6 +77,7 @@ export default function BirthdayListFirebase() {
   const handleEdit = (birthday: Birthday) => {
     setEditingBirthday(birthday);
     setShowForm(true);
+    // Scroll will be handled by the useEffect that watches showForm
   };
 
   const handleDelete = async (id: string) => {
@@ -106,6 +126,16 @@ export default function BirthdayListFirebase() {
     handleImportFromUrl();
   }, []);
 
+  // Scroll to form when it becomes visible
+  useEffect(() => {
+    if (showForm) {
+      // Use setTimeout to ensure the form is rendered before scrolling
+      // Slightly longer delay for mobile devices to ensure smooth rendering
+      const delay = window.innerWidth < 768 ? 150 : 100;
+      setTimeout(scrollToForm, delay);
+    }
+  }, [showForm]);
+
   if (loading) {
     return (
       <div className="max-w-4xl mx-auto p-6 space-y-6">
@@ -125,7 +155,9 @@ export default function BirthdayListFirebase() {
     <div className="max-w-4xl mx-auto p-6 space-y-6">
       {/* Header */}
       <div className="text-center">
-        <h1 className="text-4xl font-bold text-gray-800 mb-2">🎂 Lista de Cumpleaños</h1>
+        <GradientText as="h1" className="text-2xl md:text-4xl font-bold text-gray-800 mb-2">
+          🎂 Lista de Cumpleaños
+        </GradientText>
         <p className="text-gray-600">¡Mantén registro de todos los cumpleaños especiales!</p>
       </div>
 
@@ -144,7 +176,11 @@ export default function BirthdayListFirebase() {
       </div>
 
       {/* Add/Edit Form */}
-      {showForm && <BirthdayForm editingBirthday={editingBirthday} onSubmit={handleSubmit} onCancel={handleCancel} />}
+      {showForm && (
+        <div ref={formRef}>
+          <BirthdayForm editingBirthday={editingBirthday} onSubmit={handleSubmit} onCancel={handleCancel} />
+        </div>
+      )}
 
       {/* Today's Birthdays */}
       {todaysBirthdays.length > 0 && (
