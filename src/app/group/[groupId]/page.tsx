@@ -1,14 +1,36 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import Navigation from "@/components/Navigation";
-import GroupSelector from "@/components/GroupSelector";
-import AuthForm from "@/components/AuthForm";
+import GroupEventList from "@/components/GroupEventList";
 
-export default function Home() {
+interface GroupPageProps {
+  params: Promise<{
+    groupId: string;
+  }>;
+}
+
+export default function GroupPage({ params }: GroupPageProps) {
+  const [groupId, setGroupId] = useState<string | null>(null);
   const { user, loading } = useAuth();
+  const router = useRouter();
 
-  if (loading) {
+  useEffect(() => {
+    // Resolve the params promise
+    params.then(({ groupId: id }) => {
+      setGroupId(id);
+    });
+  }, [params]);
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push("/auth");
+    }
+  }, [user, loading, router]);
+
+  if (loading || !groupId) {
     return (
       <div className="min-h-screen bg-cyan-100/80 bg-[url(/img/balloon-clear.png)] bg-contain bg-repeat bg-blend-soft-light">
         <Navigation />
@@ -23,23 +45,14 @@ export default function Home() {
   }
 
   if (!user) {
-    return (
-      <div className="min-h-screen bg-cyan-100/80 bg-[url(/img/balloon-clear.png)] bg-contain bg-repeat bg-blend-soft-light">
-        <Navigation />
-        <div className="flex items-center justify-center py-12">
-          <div className="w-full max-w-md px-4">
-            <AuthForm />
-          </div>
-        </div>
-      </div>
-    );
+    return null; // Will redirect via useEffect
   }
 
   return (
     <div className="min-h-screen bg-cyan-100/80 bg-[url(/img/balloon-clear.png)] bg-contain bg-repeat bg-blend-soft-light">
       <Navigation />
-      <div className="px-2 py-6 space-y-8">
-        <GroupSelector />
+      <div className="px-2 py-6">
+        <GroupEventList groupId={groupId} />
       </div>
     </div>
   );

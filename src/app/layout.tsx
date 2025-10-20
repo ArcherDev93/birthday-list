@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { AuthProvider } from "@/contexts/AuthContext";
+import { Suspense } from "react";
+import AutoJoinHandler from "@/components/AutoJoinHandler";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,7 +27,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>{children}</body>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <AuthProvider>
+          <Suspense fallback={null}>
+            <AutoJoinHandler />
+          </Suspense>
+          {children}
+        </AuthProvider>
+      </body>
     </html>
   );
 }

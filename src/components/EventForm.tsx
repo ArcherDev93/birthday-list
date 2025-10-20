@@ -1,36 +1,39 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Birthday, BirthdayFormData } from "@/types/birthday";
+import { Event, EventFormData } from "@/types/event";
 import GradientText from "@/components/GradientText";
 
-interface BirthdayFormProps {
-  editingBirthday?: Birthday | null;
-  onSubmit: (data: BirthdayFormData) => void;
+interface EventFormProps {
+  editingEvent?: Event | null;
+  onSubmit: (data: EventFormData) => void;
   onCancel: () => void;
-  classId?: string; // Optional for backward compatibility
+  groupId?: string; // Optional for backward compatibility
 }
 
-export default function BirthdayForm({ editingBirthday, onSubmit, onCancel, classId }: BirthdayFormProps) {
-  const [formData, setFormData] = useState<BirthdayFormData>({
+export default function EventForm({ editingEvent, onSubmit, onCancel, groupId }: EventFormProps) {
+  const [formData, setFormData] = useState<EventFormData>({
     name: "",
     birthDate: "",
     celebrationDate: "",
     location: "",
-    asistencia: [],
-    classId: classId || "", // Use provided classId or empty string
+    attendees: [],
+    groupId: groupId || "", // Use provided groupId or empty string
+    categories: ["general"],
   });
-  const [asistenciaInput, setAsistenciaInput] = useState("");
+  const [attendeesInput, setAttendeesInput] = useState("");
+  const [availableCategories] = useState<string[]>(["general", "birthday", "celebration", "party", "meeting", "anniversary", "holiday", "special"]);
 
   useEffect(() => {
-    if (editingBirthday) {
+    if (editingEvent) {
       setFormData({
-        name: editingBirthday.name,
-        birthDate: editingBirthday.birthDate || "",
-        celebrationDate: editingBirthday.celebrationDate,
-        location: editingBirthday.location || "",
-        asistencia: editingBirthday.asistencia || [],
-        classId: editingBirthday.classId || classId || "",
+        name: editingEvent.name,
+        birthDate: editingEvent.birthDate || "",
+        celebrationDate: editingEvent.celebrationDate,
+        location: editingEvent.location || "",
+        attendees: editingEvent.attendees || [],
+        groupId: editingEvent.groupId || groupId || "",
+        categories: editingEvent.categories || ["general"],
       });
     } else {
       setFormData({
@@ -38,16 +41,17 @@ export default function BirthdayForm({ editingBirthday, onSubmit, onCancel, clas
         birthDate: "",
         celebrationDate: "",
         location: "",
-        asistencia: [],
-        classId: classId || "",
+        attendees: [],
+        groupId: groupId || "",
+        categories: ["general"],
       });
     }
-  }, [editingBirthday, classId]);
+  }, [editingEvent, groupId]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name.trim() || !formData.celebrationDate) {
-      alert("Por favor ingresa el nombre y la fecha de cumpleaños");
+      alert("Por favor ingresa el nombre y la fecha del evento");
       return;
     }
 
@@ -57,10 +61,11 @@ export default function BirthdayForm({ editingBirthday, onSubmit, onCancel, clas
       birthDate: "",
       celebrationDate: "",
       location: "",
-      asistencia: [],
-      classId: classId || "",
+      attendees: [],
+      groupId: groupId || "",
+      categories: ["general"],
     });
-    setAsistenciaInput("");
+    setAttendeesInput("");
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -71,35 +76,42 @@ export default function BirthdayForm({ editingBirthday, onSubmit, onCancel, clas
     }));
   };
 
-  const addAsistencia = () => {
-    if (asistenciaInput.trim() && !formData.asistencia?.includes(asistenciaInput.trim())) {
+  const addAttendee = () => {
+    if (attendeesInput.trim() && !formData.attendees?.includes(attendeesInput.trim())) {
       setFormData((prev) => ({
         ...prev,
-        asistencia: [...(prev.asistencia || []), asistenciaInput.trim()],
+        attendees: [...(prev.attendees || []), attendeesInput.trim()],
       }));
-      setAsistenciaInput("");
+      setAttendeesInput("");
     }
   };
 
-  const removeAsistencia = (kidToRemove: string) => {
+  const removeAttendee = (personToRemove: string) => {
     setFormData((prev) => ({
       ...prev,
-      asistencia: prev.asistencia?.filter((kid) => kid !== kidToRemove) || [],
+      attendees: prev.attendees?.filter((person) => person !== personToRemove) || [],
     }));
   };
 
-  const handleAsistenciaKeyPress = (e: React.KeyboardEvent) => {
+  const handleAttendeesKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      addAsistencia();
+      addAttendee();
     }
+  };
+
+  const toggleCategory = (category: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      categories: prev.categories.includes(category) ? prev.categories.filter((c) => c !== category) : [...prev.categories, category],
+    }));
   };
 
   return (
     <div className="bg-gradient-to-br from-white to-purple-50/30 p-8 rounded-2xl shadow-xl border border-purple-200/50 backdrop-blur-sm">
       <div className="text-center mb-6">
         <GradientText as="h2" className="text-xl md:text-3xl font-bold mb-2">
-          {editingBirthday ? "✏️ Editar Cumpleaños" : "🎉 Agregar Nuevo Cumpleaños"}
+          {editingEvent ? "✏️ Editar Evento" : "🎉 Agregar Nuevo Evento"}
         </GradientText>
         <div className="w-20 h-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mx-auto"></div>
       </div>
@@ -107,7 +119,7 @@ export default function BirthdayForm({ editingBirthday, onSubmit, onCancel, clas
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="space-y-2">
           <label htmlFor="name" className="block text-sm font-bold text-gray-700">
-            👶 Nombre del Niño/a
+            🎉 Nombre del Evento
           </label>
           <input
             type="text"
@@ -115,10 +127,21 @@ export default function BirthdayForm({ editingBirthday, onSubmit, onCancel, clas
             name="name"
             value={formData.name}
             onChange={handleChange}
-            placeholder="Ingresa el nombre del niño/a"
+            placeholder="Ingresa el nombre del evento o celebración"
             className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 bg-white/80 backdrop-blur-sm"
             required
           />
+        </div>
+
+        <div className="space-y-2">
+          <label className="block text-sm font-bold text-gray-700">🏷️ Categorías del Evento (selecciona una o más)</label>
+          <div className="flex flex-wrap gap-2">
+            {availableCategories.map((category) => (
+              <button key={category} type="button" onClick={() => toggleCategory(category)} className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${formData.categories.includes(category) ? "bg-purple-600 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"}`}>
+                {category}
+              </button>
+            ))}
+          </div>
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">
@@ -138,7 +161,7 @@ export default function BirthdayForm({ editingBirthday, onSubmit, onCancel, clas
 
           <div className="space-y-2">
             <label htmlFor="celebrationDate" className="block text-sm font-bold text-gray-700">
-              🎉 Fecha de Cumpleaños <span className="text-red-500 text-lg">*</span>
+              🎉 Fecha del Evento <span className="text-red-500 text-lg">*</span>
             </label>
             <input
               type="date"
@@ -154,7 +177,7 @@ export default function BirthdayForm({ editingBirthday, onSubmit, onCancel, clas
 
         <div className="space-y-2">
           <label htmlFor="location" className="block text-sm font-bold text-gray-700">
-            📍 Lugar de la Fiesta
+            📍 Lugar del Evento
           </label>
           <input
             type="text"
@@ -162,32 +185,32 @@ export default function BirthdayForm({ editingBirthday, onSubmit, onCancel, clas
             name="location"
             value={formData.location}
             onChange={handleChange}
-            placeholder="Ej: Casa de María, Parque Central..."
+            placeholder="Ej: Casa de María, Parque Central, Oficina..."
             className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 bg-white/80 backdrop-blur-sm"
           />
         </div>
 
         <div className="space-y-4">
-          <label className="block text-sm font-bold text-gray-700">👥 Asistencia (Niños que van)</label>
+          <label className="block text-sm font-bold text-gray-700">👥 Asistentes</label>
           <div className="flex gap-3">
             <input
               type="text"
-              value={asistenciaInput}
-              onChange={(e) => setAsistenciaInput(e.target.value)}
-              onKeyPress={handleAsistenciaKeyPress}
-              placeholder="Nombre del niño/a"
+              value={attendeesInput}
+              onChange={(e) => setAttendeesInput(e.target.value)}
+              onKeyPress={handleAttendeesKeyPress}
+              placeholder="Nombre del asistente"
               className="flex-1 px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 bg-white/80 backdrop-blur-sm"
             />
-            <button type="button" onClick={addAsistencia} className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200">
+            <button type="button" onClick={addAttendee} className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200">
               ➕
             </button>
           </div>
-          {formData.asistencia && formData.asistencia.length > 0 && (
+          {formData.attendees && formData.attendees.length > 0 && (
             <div className="flex flex-wrap gap-3">
-              {formData.asistencia.map((kid, index) => (
+              {formData.attendees.map((person, index) => (
                 <span key={index} className="bg-gradient-to-r from-purple-100 to-pink-100 text-purple-800 px-4 py-2 rounded-full text-sm flex items-center gap-2 border border-purple-200 shadow-sm">
-                  {kid}
-                  <button type="button" onClick={() => removeAsistencia(kid)} className="text-purple-600 hover:text-purple-800 font-bold hover:bg-purple-200 rounded-full w-5 h-5 flex items-center justify-center transition-colors">
+                  {person}
+                  <button type="button" onClick={() => removeAttendee(person)} className="text-purple-600 hover:text-purple-800 font-bold hover:bg-purple-200 rounded-full w-5 h-5 flex items-center justify-center transition-colors">
                     ×
                   </button>
                 </span>
@@ -198,7 +221,7 @@ export default function BirthdayForm({ editingBirthday, onSubmit, onCancel, clas
 
         <div className="flex gap-4 pt-6">
           <button type="submit" className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-4 px-6 rounded-xl font-bold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 text-lg">
-            {editingBirthday ? "💫 Actualizar Cumpleaños" : "🎉 Agregar Cumpleaños"}
+            {editingEvent ? "💫 Actualizar Evento" : "🎉 Agregar Evento"}
           </button>
           <button type="button" onClick={onCancel} className="flex-1 bg-gradient-to-r from-gray-400 to-gray-500 hover:from-gray-500 hover:to-gray-600 text-white py-4 px-6 rounded-xl font-bold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 text-lg">
             ❌ Cancelar

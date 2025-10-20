@@ -1,4 +1,4 @@
-import { Birthday } from "@/types/birthday";
+import { Event } from "@/types/event";
 
 export function calculateAge(birthDate: string): number {
   const today = new Date();
@@ -31,48 +31,48 @@ export function calculateUpcomingAge(birthDate: string): number {
   }
 }
 
-export function calculateDaysUntilBirthday(birthDate: string): number {
+export function calculateDaysUntilEvent(eventDate: string): number {
   const today = new Date();
-  const birth = new Date(birthDate);
+  const event = new Date(eventDate);
   const currentYear = today.getFullYear();
 
-  // Create this year's birthday
-  const thisYearBirthday = new Date(currentYear, birth.getMonth(), birth.getDate());
+  // Create this year's event date
+  const thisYearEvent = new Date(currentYear, event.getMonth(), event.getDate());
 
-  // If birthday has passed this year, calculate for next year
-  if (thisYearBirthday < today) {
-    thisYearBirthday.setFullYear(currentYear + 1);
+  // If event has passed this year, calculate for next year
+  if (thisYearEvent < today) {
+    thisYearEvent.setFullYear(currentYear + 1);
   }
 
-  const diffTime = thisYearBirthday.getTime() - today.getTime();
+  const diffTime = thisYearEvent.getTime() - today.getTime();
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
   return diffDays;
 }
 
-export function enrichBirthdayData(birthday: Omit<Birthday, "age" | "daysUntilBirthday">): Birthday {
-  // Use celebrationDate for calculations, fallback to birthDate if available
-  const dateForCalculation = birthday.celebrationDate || birthday.birthDate;
-  
+export function enrichEventData(event: Omit<Event, "age" | "daysUntilEvent">): Event {
+  // Use celebrationDate for calculations
+  const dateForCalculation = event.celebrationDate;
+
   if (!dateForCalculation) {
     return {
-      ...birthday,
+      ...event,
       age: 0,
-      daysUntilBirthday: 0,
+      daysUntilEvent: 0,
     };
   }
-  
+
   return {
-    ...birthday,
-    age: birthday.birthDate ? calculateUpcomingAge(birthday.birthDate) : 0, // Age based on actual birth date
-    daysUntilBirthday: calculateDaysUntilBirthday(dateForCalculation), // Days until celebration
+    ...event,
+    age: event.birthDate ? calculateUpcomingAge(event.birthDate) : undefined, // Age based on actual birth date
+    daysUntilEvent: calculateDaysUntilEvent(dateForCalculation), // Days until celebration
   };
 }
 
-export function sortBirthdaysByUpcoming(birthdays: Birthday[]): Birthday[] {
-  return [...birthdays].sort((a, b) => {
-    const daysA = a.daysUntilBirthday || 0;
-    const daysB = b.daysUntilBirthday || 0;
+export function sortEventsByUpcoming(events: Event[]): Event[] {
+  return [...events].sort((a, b) => {
+    const daysA = a.daysUntilEvent || 0;
+    const daysB = b.daysUntilEvent || 0;
     return daysA - daysB;
   });
 }
@@ -92,4 +92,20 @@ export function formatDateShort(dateString: string): string {
     month: "short",
     day: "numeric",
   });
+}
+
+// Get events by category
+export function filterEventsByCategory(events: Event[], category: string): Event[] {
+  return events.filter((event) => event.categories && event.categories.includes(category));
+}
+
+// Get all unique categories from events
+export function getUniqueCategories(events: Event[]): string[] {
+  const categories = new Set<string>();
+  events.forEach((event) => {
+    if (event.categories) {
+      event.categories.forEach((category) => categories.add(category));
+    }
+  });
+  return Array.from(categories).sort();
 }
